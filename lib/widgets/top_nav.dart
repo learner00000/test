@@ -19,7 +19,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
               ],
             )
           : IconButton(
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               onPressed: () {
                 key.currentState!.openDrawer();
               }),
@@ -69,7 +69,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
               height: 22,
               color: lightGrey,
             ),
-            SizedBox(
+            const SizedBox(
               width: 24,
             ),
             CustomText(
@@ -78,7 +78,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
               weight: FontWeight.w400,
               size: 10,
             ),
-            SizedBox(
+            const SizedBox(
               width: 16,
             ),
             Container(

@@ -11,7 +11,7 @@ class DriversPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return  Container(
       child: Column(
         children: [
           Obx(
@@ -31,7 +31,7 @@ class DriversPage extends StatelessWidget {
           ),
           Expanded(
               child: ListView(
-            children: [
+            children: const [
               //DriversTable(),
               Text("This is 'Admins' page!")
             ],

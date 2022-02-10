@@ -16,46 +16,46 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('is auth?? home');
-    return Container(
-      child: Column(
-        children: [
-          // Obx(() => 
-          Row(
+    return Scaffold(
+      appBar: AppBar(title : Text("Home")),
+      body: Container(
+        child: Column(
+          children: [
+            Row(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: ResponsiveWidget.isSmallScreen(context) ? 56 : 6),
+                      child: CustomText(
+                        text: menuController.activeItem.value,
+                        size: 24,
+                        weight: FontWeight.bold,
+                        color: dark,
+                      )),
+                ],
+              ),
+            Expanded(
+                child: ListView(
               children: [
-                Container(
-                    margin: EdgeInsets.only(
-                        top: ResponsiveWidget.isSmallScreen(context) ? 56 : 6),
-                    child: CustomText(
-                      text: menuController.activeItem.value,
-                      size: 24,
-                      weight: FontWeight.bold,
-                      color: dark,
-                    )),
-              ],
-            ),
-          // ),
-          Expanded(
-              child: ListView(
-            children: [
-              if (ResponsiveWidget.isLargeScreen(context) ||
-                  ResponsiveWidget.isMediumScreen(context))
-                if (ResponsiveWidget.isCustomSize(context))
-                  HomeCardsMediumScreen()
+                if (ResponsiveWidget.isLargeScreen(context) ||
+                    ResponsiveWidget.isMediumScreen(context))
+                  if (ResponsiveWidget.isCustomSize(context))
+                    HomeCardsMediumScreen()
+                  else
+                    HomeCardsLargeScreen()
                 else
-                  HomeCardsLargeScreen()
-              else
-                HomeCardsSmallScreen(),
-              // if (!ResponsiveWidget.isSmallScreen(context))
-              //   //RevenueSectionLarge()
-              //    Text('This is "home_screen" now!'),
-              // else
-              //   Text('This is "home_screen" now!'),
-              // RevenueSectionSmall(),
-              //AvailableDriversTable(),
-            ],
-          ))
-        ],
+                  const HomeCardsSmallScreen(),
+                // if (!ResponsiveWidget.isSmallScreen(context))
+                //   //RevenueSectionLarge()
+                //    Text('This is "home_screen" now!'),
+                // else
+                //   Text('This is "home_screen" now!'),
+                // RevenueSectionSmall(),
+                //AvailableDriversTable(),
+              ],
+            ))
+          ],
+        ),
       ),
     );
   }

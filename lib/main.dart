@@ -13,49 +13,49 @@ import 'screens/home_screen/home.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'routing/routes.dart';
 
-void main() {
+void main() async {
   Get.put(MenuController());
   Get.put(NavigationController());
   Get.put(AuthController());
-  Get.put(AuthCard);
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Obx(() => GetMaterialApp(
-          initialRoute: AuthController.instance.isAuth
-              ? homeScreenRoute
-              : authenticationScreenRoute,
-          unknownRoute: GetPage(
-              name: '/not-found',
-              page: () => PageNotFound(),
-              transition: Transition.fadeIn),
-          getPages: [
-            GetPage(
-                name: rootRoute,
-                page: () {
-                  return SiteLayout();
-                }),
-            GetPage(
-                name: authenticationScreenRoute,
-                page: () => const AuthenticationScreen()),
-            GetPage(name: homeScreenRoute, page: () => const HomeScreen()),
-          ],
-          debugShowCheckedModeBanner: false,
-          title: 'BasicCode',
-          theme: ThemeData(
-            scaffoldBackgroundColor: light,
-            textTheme: GoogleFonts.mulishTextTheme(Theme.of(context).textTheme)
-                .apply(bodyColor: Colors.black),
-            pageTransitionsTheme: const PageTransitionsTheme(builders: {
-              TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
-              TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+    return GetMaterialApp(
+      // initialRoute: AuthController.instance.isAuth? homeScreenRoute : authenticationScreenRoute,
+      unknownRoute: GetPage(
+          name: '/not-found',
+          page: () => PageNotFound(),
+          transition: Transition.fadeIn),
+      getPages: [
+        GetPage(
+            name: rootRoute,
+            page: () {
+              return SiteLayout();
             }),
-            primarySwatch: Colors.blue,
-          ),
-        ));
+        GetPage(
+            name: authenticationScreenRoute,
+            page: () => const AuthenticationScreen()),
+        GetPage(name: homeScreenRoute, page: () => const HomeScreen()),
+      ],
+      debugShowCheckedModeBanner: false,
+      title: 'BasicCode',
+      theme: ThemeData(
+        scaffoldBackgroundColor: light,
+        textTheme: GoogleFonts.mulishTextTheme(Theme.of(context).textTheme)
+            .apply(bodyColor: Colors.black),
+        pageTransitionsTheme: const PageTransitionsTheme(builders: {
+          TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        }),
+        primarySwatch: Colors.blue,
+      ),
+      home: Obx(() => AuthController.instance.isAuth
+          ? const AuthenticationScreen()
+          : const AuthenticationScreen()),
+    );
   }
 }
 

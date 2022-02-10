@@ -1,74 +1,76 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'dart:convert';
 import 'dart:async';
-// import 'dart:io' show Platform;
 import 'package:universal_platform/universal_platform.dart';
-
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/http_exception.dart';
 
-enum AuthMode { Signup, Login }
 
-class AuthController extends GetxController with GetSingleTickerProviderStateMixin  {
+class AuthController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   static AuthController instance = Get.find();
-  Rx<dynamic>? authMode = AuthMode.Login.obs;
+  // Rx<dynamic>? authMode = AuthMode.Login.obs;
   RxBool? isLoading = false.obs;
-  String? _token; 
+  String? _token;
   DateTime? _expiryDate;
   String? _userId;
   Timer? _authTimer;
-final _isAuth = false.obs;
+  final _isAuth = false.obs;
 
+  // AnimationController? controller;
+  // Animation<Offset>? slideAnimation;
+  // Animation<double>? opacityAnimation;
+  // late TextEditingController passwordController;
+  // final key = GlobalKey<FormState>();
 
-  AnimationController? controller;
-  Animation<Offset>? slideAnimation;
-  Animation<double>? opacityAnimation;
-
-    @override
+  @override
   void onInit() {
     super.onInit();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(
-        milliseconds: 300,
-      ),
-    );
-    slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1.5),
-      end: const Offset(0, 0),
-    ).animate(
-      CurvedAnimation(
-        parent: controller as Animation<double>,
-        curve: Curves.fastOutSlowIn,
-      ),
-    );
-    opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: controller as Animation<double>,
-        curve: Curves.easeIn,
-      ),
-    );
+    // _autoLogin();
+    // controller = AnimationController(
+    //   vsync: this,
+    //   duration: const Duration(
+    //     milliseconds: 300,
+    //   ),
+    // );
+    // slideAnimation = Tween<Offset>(
+    //   begin: const Offset(0, -1.5),
+    //   end: const Offset(0, 0),
+    // ).animate(
+    //   CurvedAnimation(
+    //     parent: controller as Animation<double>,
+    //     curve: Curves.fastOutSlowIn,
+    //   ),
+    // );
+    // opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+    //   CurvedAnimation(
+    //     parent: controller as Animation<double>,
+    //     curve: Curves.easeIn,
+    //   ),
+    // );
+
     // _heightAnimation.addListener(() => setState(() {}));
+
+    // passwordController = TextEditingController();
   }
 
-  //  bool get isAuth{
-  //   return token != null;
+  // @override
+  // void onClose() {
+  //   super.onClose();
+  //   // passwordController.dispose();
   // }
-// RxBool get isAuth {
-//    return RxBool(token != null);
-//  }
 
-
-bool get isAuth {
- _isAuth.value= token != null;
- return _isAuth.value;
-}
+  bool get isAuth {
+    _isAuth.value = token != null;
+    return _isAuth.value;
+  }
 
   String? get token {
     if (_expiryDate != null &&
@@ -85,13 +87,10 @@ bool get isAuth {
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
-              // print('app is here!!!5555');
 
     final host = UniversalPlatform.isAndroid ? '10.0.2.2' : '127.0.0.1';
     final url = Uri.parse('http://$host:8000/api/$urlSegment');
-    //final url = Uri.parse('http://10.0.2.2:8000/api/$urlSegment');
-    //final url = Uri.parse('http://127.0.0.1:8000/api/$urlSegment');
-
+ 
     try {
       final http.Response response = await http.post(
         url,
@@ -105,23 +104,22 @@ bool get isAuth {
           },
         ),
       );
-      // print('this is responsde ' );
-      // print(response);
-
+   
       final responseData = json.decode(response.body);
-            //  print(responseData);
 
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']['message']);
       } else {
-      _token = responseData['idToken'];
-      _userId = responseData['id'];
-      _expiryDate = DateTime.now().add(
-        Duration(
-          seconds: responseData['expiresIn'],
-        ),
-      );
-    }
+        _token = responseData['idToken'];
+        _userId = responseData['id'];
+        _expiryDate = DateTime.now().add(
+          Duration(
+            microseconds: responseData['expiresIn'],
+          ),
+        );
+        _isAuth.value = true;
+
+      }
       _autoLogout();
       // update();
       final prefs = await SharedPreferences.getInstance();
@@ -133,8 +131,6 @@ bool get isAuth {
         },
       );
       prefs.setString('userData', userData);
-
-      // print(prefs.getString('userData'));
 
     } catch (error) {
       throw error;
@@ -149,10 +145,12 @@ bool get isAuth {
     return _authenticate(email, password, 'login');
   }
 
-  Future<bool> tryAutoLogin() async {
+  Future<bool> _autoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       return false;
+    } else {
+      _isAuth.value = true;
     }
     final Map<String, Object> extractedUserData = Map<String, Object>.from(
         json.decode(prefs.getString('userData') as String));
@@ -165,7 +163,6 @@ bool get isAuth {
     _token = extractedUserData['token'] as String;
     _userId = extractedUserData['userId'] as String;
     _expiryDate = expiryDate;
-    // update();
     _autoLogout();
     return true;
   }
@@ -178,9 +175,7 @@ bool get isAuth {
       _authTimer!.cancel();
       _authTimer = null;
     }
-    // update();
     final prefs = await SharedPreferences.getInstance();
-    // prefs.remove('userData');
     prefs.clear();
   }
 
