@@ -7,7 +7,6 @@ import '/models/http_exception.dart';
 import '/controllers/auth_controller.dart';
 import '/widgets/custom_text.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 enum AuthMode { Signup, Login }
 

@@ -5,13 +5,11 @@ import 'package:get/get.dart';
 
 import 'dart:convert';
 import 'dart:async';
-import 'package:universal_platform/universal_platform.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/http_exception.dart';
-
 
 class AuthController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -24,48 +22,11 @@ class AuthController extends GetxController
   Timer? _authTimer;
   final _isAuth = false.obs;
 
-  // AnimationController? controller;
-  // Animation<Offset>? slideAnimation;
-  // Animation<double>? opacityAnimation;
-  // late TextEditingController passwordController;
-  // final key = GlobalKey<FormState>();
-
   @override
   void onInit() {
     super.onInit();
-    // _autoLogin();
-    // controller = AnimationController(
-    //   vsync: this,
-    //   duration: const Duration(
-    //     milliseconds: 300,
-    //   ),
-    // );
-    // slideAnimation = Tween<Offset>(
-    //   begin: const Offset(0, -1.5),
-    //   end: const Offset(0, 0),
-    // ).animate(
-    //   CurvedAnimation(
-    //     parent: controller as Animation<double>,
-    //     curve: Curves.fastOutSlowIn,
-    //   ),
-    // );
-    // opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
-    //   CurvedAnimation(
-    //     parent: controller as Animation<double>,
-    //     curve: Curves.easeIn,
-    //   ),
-    // );
-
-    // _heightAnimation.addListener(() => setState(() {}));
-
-    // passwordController = TextEditingController();
+    _autoLogin();
   }
-
-  // @override
-  // void onClose() {
-  //   super.onClose();
-  //   // passwordController.dispose();
-  // }
 
   bool get isAuth {
     _isAuth.value = token != null;
@@ -87,10 +48,12 @@ class AuthController extends GetxController
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
-
-    final host = UniversalPlatform.isAndroid ? '10.0.2.2' : '127.0.0.1';
+    //for Android emulator
+    final host = '10.0.2.2';
+    // web version
+    //  final host = '127.0.0.1'
     final url = Uri.parse('http://$host:8000/api/$urlSegment');
- 
+
     try {
       final http.Response response = await http.post(
         url,
@@ -104,7 +67,7 @@ class AuthController extends GetxController
           },
         ),
       );
-   
+
       final responseData = json.decode(response.body);
 
       if (responseData['error'] != null) {
@@ -118,7 +81,6 @@ class AuthController extends GetxController
           ),
         );
         _isAuth.value = true;
-
       }
       _autoLogout();
       // update();
@@ -131,7 +93,6 @@ class AuthController extends GetxController
         },
       );
       prefs.setString('userData', userData);
-
     } catch (error) {
       throw error;
     }
